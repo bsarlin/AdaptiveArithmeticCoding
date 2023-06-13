@@ -1,4 +1,5 @@
 from collections import Counter
+from typing import Any, Dict, Union
 
 
 class NumberRange:
@@ -64,14 +65,14 @@ class NumberRange:
             "lower_bound": lower_bound,
             "upper_bound": upper_bound,
             "count": current_count + count,
-            "list_index": list_index          
+            "list_index": list_index
             }   
 
-    def get_range_information(self):
+    def get_range_information(self) -> Dict[str, Dict]:
         return self._range_information
     
     def get_character_information(self, 
-                                  character: str = None):
+                                  character: str = None) -> Union[Dict[str, Any], None]:
         try:
             if character is None:
                 character = self._characters[len(self._characters) - 1]
