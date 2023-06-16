@@ -2,6 +2,7 @@ from collections import Counter
 from typing import List, Tuple
 
 from number_range import NumberRange
+from decoder import Decoder
 
 
 class Encoder:
@@ -20,17 +21,16 @@ class Encoder:
         upper_bound = 1.0
         for i in range(len(message_to_encode)):
             character = message_to_encode[i]
-            self.number_range.update_information(character=character,
-                                                 count=1)
-            self.number_range.update_probabilities()
-            self.number_range.update_bounds(lower_bound=lower_bound,
-                                            upper_bound=upper_bound)
             character_info = self.number_range.get_character_information(character=character)
             upper_bound = character_info["upper_bound"]
             lower_bound = character_info["lower_bound"]
             self.number_range.update_bounds(lower_bound=lower_bound,
                                             upper_bound=upper_bound)
-        return (lower_bound, upper_bound)
+            self.number_range.update_information(character=character,
+                                                 count=1)
+            self.number_range.update_probabilities()
+
+        return lower_bound, upper_bound
 
     def get_number_range(self) -> NumberRange:
         return self.number_range
@@ -74,8 +74,11 @@ class Encoder:
         return (result, underflows)
 
 if __name__ == "__main__":
-    initial_string = ""
+    initial_string = "YRATMEK"
     encoder = Encoder(initial_string)
+    decoder = Decoder(initial_string)
     message_to_encode = "ARYTMETYKA"
-    result = encoder.encode_using_integers(message_to_encode=message_to_encode)
+    result = encoder.encode(message_to_encode=message_to_encode)
+    encoded_message = result[0] + ((result[1] - result[0]) / 2)
+    decoder.decode(message=encoded_message, cap=15)
     print(result)
