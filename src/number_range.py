@@ -16,7 +16,7 @@ class NumberRange:
                                upper_bound=1.0)
 
     # updates each character's bounds in relation to other characters' order and probability
-    # 3rd update operation
+    # 1st update operation
     def update_bounds(self,
                       lower_bound: float,
                       upper_bound: float):
@@ -35,7 +35,7 @@ class NumberRange:
                 self._range_information[character]["upper_bound"] = self._range_information[character]["lower_bound"] + probability * range_size
 
     # updates each character's "probability" field based on each character's count and the sum of all counts
-    # 2nd update operation
+    # 3rd update operation
     def update_probabilities(self):
         for character in self._characters:
             self._range_information[character]["probability"] = self._range_information[character]["count"] / self._sum_of_counts
@@ -50,7 +50,7 @@ class NumberRange:
             list_index += 1
 
     # updates a character's count and index information
-    # 1st update operation
+    # 2nd update operation
     def update_information(self, 
                            character: str, 
                            count: int):
