@@ -79,6 +79,7 @@ if __name__ == "__main__":
     decoder = Decoder(initial_string)
     message_to_encode = "ARYTMETYKA"
     result = encoder.encode(message_to_encode=message_to_encode)
+    # take a number from the middle of the output range
     encoded_message = result[0] + ((result[1] - result[0]) / 2)
     decoder.decode(message=encoded_message, cap=15)
     print(result)
