@@ -11,9 +11,12 @@ class Encoder:
                  initial_string: str):
         if initial_string is not None:
             statistic = Counter(initial_string)
+            stop_char = initial_string[len(initial_string) - 1]
         else:
             statistic = None
+            stop_char = None
         self.number_range = NumberRange(statistic=statistic)
+        self.stop_char = stop_char
 
     def encode(self, 
                message_to_encode: str) -> Tuple[float, float]:
@@ -24,11 +27,12 @@ class Encoder:
             character_info = self.number_range.get_character_information(character=character)
             upper_bound = character_info["upper_bound"]
             lower_bound = character_info["lower_bound"]
-            self.number_range.update_bounds(lower_bound=lower_bound,
-                                            upper_bound=upper_bound)
+
             self.number_range.update_information(character=character,
                                                  count=1)
             self.number_range.update_probabilities()
+            self.number_range.update_bounds(lower_bound=lower_bound,
+                                            upper_bound=upper_bound)
 
         return lower_bound, upper_bound
 
@@ -74,10 +78,10 @@ class Encoder:
         return (result, underflows)
 
 if __name__ == "__main__":
-    initial_string = "YRATMEK"
+    initial_string = "YRATMEK$"
     encoder = Encoder(initial_string)
     decoder = Decoder(initial_string)
-    message_to_encode = "ARYTMETYKA"
+    message_to_encode = "ARYTMETYKA$"
     result = encoder.encode(message_to_encode=message_to_encode)
     # take a number from the middle of the output range
     encoded_message = result[0] + ((result[1] - result[0]) / 2)

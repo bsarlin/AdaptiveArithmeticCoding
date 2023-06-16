@@ -14,26 +14,32 @@ class Decoder:
                  initial_string: str):
         if initial_string is not None:
             statistic = Counter(initial_string)
+            stop_char = initial_string[len(initial_string) - 1]
         else:
             statistic = None
+            stop_char = None
         self.number_range = NumberRange(statistic=statistic)
+        self.stop_char = stop_char
 
     # prints decoded characters to the output
     def decode(self, message: float, cap: int):
-        for i in range(cap):
+        for _ in range(cap):
             character = self._find_character(message)
             if character is None:
                 raise CharacterNotDefined(f"Character {character} not defined in the statistic")
+            print(character)
+            if character == self.stop_char:
+                break
 
             character_info = self.number_range.get_character_information(character=character)
             upper_bound = character_info["upper_bound"]
             lower_bound = character_info["lower_bound"]
-            self.number_range.update_bounds(lower_bound=lower_bound,
-                                            upper_bound=upper_bound)
+
             self.number_range.update_information(character=character,
                                                  count=1)
             self.number_range.update_probabilities()
-            print(character)
+            self.number_range.update_bounds(lower_bound=lower_bound,
+                                            upper_bound=upper_bound)
 
     def _find_character(self, message: float) -> Union[str, None]:
         for character, char_info in self.number_range.get_range_information().items():
