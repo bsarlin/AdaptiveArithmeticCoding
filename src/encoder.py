@@ -2,6 +2,7 @@ from collections import Counter
 from typing import List, Tuple
 
 from number_range import NumberRange
+from decoder import Decoder
 
 
 class Encoder:
@@ -10,42 +11,30 @@ class Encoder:
                  initial_string: str):
         if initial_string is not None:
             statistic = Counter(initial_string)
+            stop_char = initial_string[len(initial_string) - 1]
         else:
             statistic = None
+            stop_char = None
         self.number_range = NumberRange(statistic=statistic)
+        self.stop_char = stop_char
 
     def encode(self, 
-               message_to_encode: str) -> Tuple(float, float):
+               message_to_encode: str) -> Tuple[float, float]:
         lower_bound = 0.0
         upper_bound = 1.0
         for i in range(len(message_to_encode)):
             character = message_to_encode[i]
             character_info = self.number_range.get_character_information(character=character)
-            if character_info != None:
-                is_new_character = False
-                list_index = character_info["list_index"]
-                temp_lower_bound = character_info["lower_bound"]
-                temp_upper_bound = character_info["upper_bound"]
-            else:
-                is_new_character = True
-                list_index = None
-                temp_lower_bound = None
-                temp_upper_bound = None
+            upper_bound = character_info["upper_bound"]
+            lower_bound = character_info["lower_bound"]
+
             self.number_range.update_information(character=character,
-                                                 count=1,
-                                                 is_new_character=is_new_character,
-                                                 list_index=list_index,
-                                                 lower_bound=temp_lower_bound,
-                                                 upper_bound=temp_upper_bound)
+                                                 count=1)
             self.number_range.update_probabilities()
             self.number_range.update_bounds(lower_bound=lower_bound,
                                             upper_bound=upper_bound)
-            character_info = self.number_range.get_character_information(character=character)
-            upper_bound = character_info["upper_bound"]
-            lower_bound = character_info["lower_bound"]
-            self.number_range.update_bounds(lower_bound=lower_bound,
-                                            upper_bound=upper_bound)
-        return (lower_bound, upper_bound)
+
+        return lower_bound, upper_bound
 
     def get_number_range(self) -> NumberRange:
         return self.number_range
@@ -59,23 +48,8 @@ class Encoder:
         result = ""
         for i in range(len(message_to_encode)):
             character = message_to_encode[i]
-            character_info = self.number_range.get_character_information(character=character)
-            if character_info != None:
-                is_new_character = False
-                list_index = character_info["list_index"]
-                temp_lower_bound = character_info["lower_bound"]
-                temp_upper_bound = character_info["upper_bound"]
-            else:
-                is_new_character = True
-                list_index = None
-                temp_lower_bound = None
-                temp_upper_bound = None
             self.number_range.update_information(character=character,
-                                                 count=1,
-                                                 is_new_character=is_new_character,
-                                                 list_index=list_index,
-                                                 lower_bound=temp_lower_bound,
-                                                 upper_bound=temp_upper_bound)
+                                                 count=1)
             self.number_range.update_probabilities()
             self.number_range.update_bounds(lower_bound=0.0,
                                             upper_bound=1.0)
@@ -104,8 +78,12 @@ class Encoder:
         return (result, underflows)
 
 if __name__ == "__main__":
-    initial_string = ""
+    initial_string = "YRATMEK$"
     encoder = Encoder(initial_string)
-    message_to_encode = "ARYTMETYKA"
-    result = encoder.encode_using_integers(message_to_encode=message_to_encode)
+    decoder = Decoder(initial_string)
+    message_to_encode = "ARYTMETYKA$"
+    result = encoder.encode(message_to_encode=message_to_encode)
+    # take a number from the middle of the output range
+    encoded_message = result[0] + ((result[1] - result[0]) / 2)
+    decoder.decode(message=encoded_message, cap=15)
     print(result)

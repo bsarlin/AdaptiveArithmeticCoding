@@ -15,6 +15,8 @@ class NumberRange:
             self.update_bounds(lower_bound=0.0,
                                upper_bound=1.0)
 
+    # updates each character's bounds in relation to other characters' order and probability
+    # 3rd update operation
     def update_bounds(self,
                       lower_bound: float,
                       upper_bound: float):
@@ -32,6 +34,8 @@ class NumberRange:
             else:
                 self._range_information[character]["upper_bound"] = self._range_information[character]["lower_bound"] + probability * range_size
 
+    # updates each character's "probability" field based on each character's count and the sum of all counts
+    # 2nd update operation
     def update_probabilities(self):
         for character in self._characters:
             self._range_information[character]["probability"] = self._range_information[character]["count"] / self._sum_of_counts
@@ -42,25 +46,27 @@ class NumberRange:
         for character in statistic.keys():
             count = statistic[character]
             self.update_information(character=character, 
-                                    count=count, 
-                                    list_index=list_index,
-                                    is_new_character=True)
+                                    count=count)
             list_index += 1
 
+    # updates a character's count and index information
+    # 1st update operation
     def update_information(self, 
                            character: str, 
-                           count: int, 
-                           list_index: int = None, 
-                           lower_bound: float = None,
-                           upper_bound: float = None,
-                           is_new_character: bool = False):
+                           count: int):
         self._sum_of_counts += count
-        if is_new_character == True:
+        is_new_character = self.get_character_information(character=character) is None
+        if is_new_character:
             current_count = 0
             self._characters.append(character)
+            lower_bound = None
+            upper_bound = None
             list_index = len(self._characters) - 1
         else:
             current_count = self._range_information[character]["count"]
+            lower_bound = self._range_information[character]["lower_bound"]
+            upper_bound = self._range_information[character]["upper_bound"]
+            list_index = self._range_information[character]["list_index"]
         self._range_information[character] = {
             "lower_bound": lower_bound,
             "upper_bound": upper_bound,
