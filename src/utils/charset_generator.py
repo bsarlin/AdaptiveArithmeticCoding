@@ -1,5 +1,7 @@
 from random import randrange
 from math import log2
+from typing import Tuple
+from time import sleep
 
 def file_reader(filename: str, numeric_output: bool = False):
     with open(filename, 'r') as file:
@@ -31,3 +33,34 @@ def file_charset_entropy(filename: str):
     for val in stats.values():
         entropy += (val/denominator)*log2(denominator/val)
     return entropy
+
+def message_entropy(message: str):
+    char_dict = {}
+    for char in message:
+        if char not in char_dict:
+            char_dict[char] = 0
+        char_dict[char] += 1
+    denominator = sum(char_dict.values())    
+    if denominator == 0:
+        raise ValueError("No characters found")
+    entropy = 0
+    for val in char_dict.values():
+        entropy += (val/denominator)*log2(denominator/val)
+    return entropy
+
+def get_bit_representation(bounds: Tuple[float, float]) -> str:
+    lower_bound = bounds[0]
+    upper_bound = bounds[1]
+    print("upper_bound: {}, lower_bound: {}".format(upper_bound,  lower_bound))
+    bit_str = ""
+    up = 1
+    down = 0
+    while True:
+        if lower_bound <= down and upper_bound >= up:
+            return bit_str        
+        if up >= upper_bound and (up - (up - down)/2) > down and (up - (up - down)/2) > lower_bound:
+            up = up - (up - down)/2
+            bit_str += "0"
+        else:
+            down = down + (up - down)/2
+            bit_str += "1"

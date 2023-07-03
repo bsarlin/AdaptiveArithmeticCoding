@@ -4,6 +4,8 @@ from typing import List, Tuple
 from number_range import NumberRange
 from decoder import Decoder
 
+from utils.charset_generator import *
+
 
 class Encoder:
 
@@ -85,5 +87,9 @@ if __name__ == "__main__":
     result = encoder.encode(message_to_encode=message_to_encode)
     # take a number from the middle of the output range
     encoded_message = result[0] + ((result[1] - result[0]) / 2)
+    bit_repr = get_bit_representation(result)
+    print("Bit representation: {}".format(bit_repr))
+    print("B/C ratio: {} bits".format(len(bit_repr) / len("ARYTMETYKA$")))
+    print("\"{}\" entropy: {} bits".format("ARYTMETYKA$", message_entropy("ARYTMETYKA$")))
     decoder.decode(message=encoded_message, cap=15)
     print(result)
