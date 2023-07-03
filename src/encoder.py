@@ -84,7 +84,7 @@ if __name__ == "__main__":
     initial_string = "YRATMEK$"
     encoder = Encoder(initial_string)
     decoder = Decoder(initial_string)
-    message_to_encode = "ARYTMETYKA$"
+    message_to_encode = "AR"
     result = encoder.encode(message_to_encode=message_to_encode)
     # take a number from the middle of the output range
     encoded_message = result[0] + ((result[1] - result[0]) / 2)
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     print("Bit representation: {} (Huffman)".format(bit_repr_huff))
     print("B/C ratio: {} bits".format(len(bit_repr) / len(message_to_encode)))
     print("B/C ratio: {} bits (Huffman)".format(len(bit_repr_huff) / len(message_to_encode)))
-    print("\"{}\" entropy: {} bits".format("ARYTMETYKA$", message_entropy("ARYTMETYKA$")))
+    print("\"{}\" entropy: {} bits".format(message_to_encode, message_entropy(message_to_encode)))
     
     decoder.decode(message=encoded_message, cap=15)
     print(result)
