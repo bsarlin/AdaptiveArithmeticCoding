@@ -4,6 +4,7 @@ from typing import List, Tuple
 from number_range import NumberRange
 from decoder import Decoder
 
+from huffman import Huffman_Encoding
 from utils.charset_generator import *
 
 
@@ -87,9 +88,14 @@ if __name__ == "__main__":
     result = encoder.encode(message_to_encode=message_to_encode)
     # take a number from the middle of the output range
     encoded_message = result[0] + ((result[1] - result[0]) / 2)
+
     bit_repr = get_bit_representation(result)
+    bit_repr_huff, tree = Huffman_Encoding(message_to_encode)
     print("Bit representation: {}".format(bit_repr))
-    print("B/C ratio: {} bits".format(len(bit_repr) / len("ARYTMETYKA$")))
+    print("Bit representation: {} (Huffman)".format(bit_repr_huff))
+    print("B/C ratio: {} bits".format(len(bit_repr) / len(message_to_encode)))
+    print("B/C ratio: {} bits (Huffman)".format(len(bit_repr_huff) / len(message_to_encode)))
     print("\"{}\" entropy: {} bits".format("ARYTMETYKA$", message_entropy("ARYTMETYKA$")))
+    
     decoder.decode(message=encoded_message, cap=15)
     print(result)
