@@ -60,14 +60,16 @@ class Encoder:
             lower_bound_as_string = str(lower_bound)
             upper_bound_as_string = str(upper_bound)
             if lower_bound_as_string[0] == upper_bound_as_string[0]:
-                if lower_bound_as_string[1] != '0' and upper_bound_as_string[1] != '9':
-                    result = result + lower_bound_as_string[0]
-                    lower_bound_as_string = lower_bound_as_string[1:] + '0'
-                    upper_bound_as_string = upper_bound_as_string[1:] + '9'
-                    if underflow_count != 0:
-                        underflows.append(underflow_count)
-                        underflow_count = 0
-                elif lower_bound_as_string[1] == '0' and upper_bound_as_string[1] == '9':
+                result = result + lower_bound_as_string[0]
+                lower_bound_as_string = lower_bound_as_string[1:] + '0'
+                upper_bound_as_string = upper_bound_as_string[1:] + '9'
+                if underflow_count != 0:
+                    underflows.append(underflow_count)
+                    underflow_count = 0
+                lower_bound = int(lower_bound_as_string)
+                upper_bound = int(upper_bound_as_string)
+            elif (int(upper_bound_as_string[0]) - int(lower_bound_as_string[0])) == 1:  
+                if lower_bound_as_string[1] == '0' and upper_bound_as_string[1] == '9':
                     lower_bound_as_string = lower_bound_as_string[:2] + lower_bound_as_string[3:] + '0'
                     upper_bound_as_string = upper_bound_as_string[:2] + upper_bound_as_string[3:] + '9'
                 lower_bound = int(lower_bound_as_string)
