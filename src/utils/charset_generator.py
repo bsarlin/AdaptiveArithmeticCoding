@@ -51,16 +51,33 @@ def message_entropy(message: str):
 def get_bit_representation(bounds: Tuple[float, float]) -> str:
     lower_bound = bounds[0]
     upper_bound = bounds[1]
-    print("upper_bound: {}, lower_bound: {}".format(upper_bound,  lower_bound))
     bit_str = ""
     up = 1
     down = 0
+    
     while True:
-        if lower_bound <= down and upper_bound >= up:
-            return bit_str        
-        if up >= upper_bound and (up - (up - down)/2) > down and (up - (up - down)/2) > lower_bound:
-            up = up - (up - down)/2
+        # sleep(1)
+        delimeter = (up - down)/2
+        head = down + delimeter
+        # print("down: {}, up: {}, head: {} , delimeter: {}".format(down,  up, head, delimeter))
+        if down >= lower_bound and up <= upper_bound:
+            return bit_str       
+        
+        if (head <= upper_bound) and (head >= lower_bound):
+            if abs(head - upper_bound) > abs(head - lower_bound):
+                down += delimeter
+                bit_str += "1"
+            else:
+                up -= delimeter
+                bit_str += "0"
+            continue
+
+        if up > upper_bound and (up-delimeter)>lower_bound:
+            up -= delimeter
             bit_str += "0"
-        else:
-            down = down + (up - down)/2
+            continue
+
+        if down < lower_bound and (down+delimeter)<upper_bound:
+            down += delimeter
             bit_str += "1"
+            continue
