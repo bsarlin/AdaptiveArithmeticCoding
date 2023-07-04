@@ -4,10 +4,6 @@ from typing import List, Tuple, Union
 from number_range import NumberRange
 
 
-class CharacterNotDefined(Exception):
-    pass
-
-
 class Decoder:
 
     def __init__(self,
@@ -27,7 +23,7 @@ class Decoder:
         for _ in range(cap):
             character = self._find_character(message)
             if character is None:
-                raise CharacterNotDefined(f"Character {character} not defined in the statistic")
+                break
             result += character
             if character == self.stop_char:
                 break
@@ -54,7 +50,7 @@ class Decoder:
             helper = (int(registry) - lower_bound) / (upper_bound - lower_bound + 1)
             character = self._find_character(helper)
             if character is None:
-                raise CharacterNotDefined(f"Character {character} not defined in the statistic")
+                break
             result += character
             if character == self.stop_char:
                 break
@@ -94,6 +90,8 @@ class Decoder:
         return result
 
     def _find_character(self, message: float) -> Union[str, None]:
+        if message == 1.0:
+            return self.stop_char
         for character, char_info in self.number_range.get_range_information().items():
             if char_info["lower_bound"] <= message < char_info["upper_bound"]:
                 return character
