@@ -45,43 +45,51 @@ class Encoder:
     def encode_using_integers(self,
                               message_to_encode: str) -> Tuple[str, List[int]]:
         lower_bound = 0
-        upper_bound = 65535
+        upper_bound = 999999
         underflow_count = 0
         underflows = []
         result = ""
         for i in range(len(message_to_encode)):
             character = message_to_encode[i]
+            character_info = self.number_range.get_character_information(character=character)
+            range_size = upper_bound - lower_bound + 1
+            upper_bound = int(lower_bound + (range_size * character_info["upper_bound"]) - 1)
+            lower_bound = int(lower_bound + range_size * character_info["lower_bound"])
+            lower_bound_as_string = "{:06d}".format(lower_bound)
+            upper_bound_as_string = "{:06d}".format(upper_bound)
+            stop_loop = False
+            while not stop_loop:
+                diff_by_one = abs(int(lower_bound_as_string[0]) - int(upper_bound_as_string[0])) == 1
+                if lower_bound_as_string[0] == upper_bound_as_string[0]:
+                    result = result + lower_bound_as_string[0]
+                    lower_bound_as_string = lower_bound_as_string[1:] + '0'
+                    lower_bound = int(lower_bound_as_string)
+                    upper_bound_as_string = upper_bound_as_string[1:] + '9'
+                    upper_bound = int(upper_bound_as_string)
+                    if underflow_count != 0:
+                        result += underflow_count
+                        underflows.append(underflow_count)
+                        underflow_count = 0
+                elif diff_by_one and lower_bound_as_string[1] == '0' and upper_bound_as_string[1] == '9':
+                    lower_bound_as_string = lower_bound_as_string[:2] + lower_bound_as_string[3:] + '0'
+                    upper_bound_as_string = upper_bound_as_string[:2] + upper_bound_as_string[3:] + '9'
+                    underflow_count += 1
+                    lower_bound = int(lower_bound_as_string)
+                    upper_bound = int(upper_bound_as_string)
+                else:
+                    stop_loop = True
             self.number_range.update_information(character=character,
                                                  count=1)
             self.number_range.update_probabilities()
             self.number_range.update_bounds(lower_bound=0.0,
                                             upper_bound=1.0)
-            character_info = self.number_range.get_character_information(character=character)
-            range_size = upper_bound - lower_bound + 1
-            upper_bound = int(lower_bound + (range_size * character_info["upper_bound"]) - 1)
-            lower_bound = int(lower_bound + range_size * character_info["lower_bound"])
-            lower_bound_as_string = str(lower_bound)
-            upper_bound_as_string = str(upper_bound)
-            if lower_bound_as_string[0] == upper_bound_as_string[0]:
-                if lower_bound_as_string[1] != '0' and upper_bound_as_string[1] != '9':
-                    result = result + lower_bound_as_string[0]
-                    lower_bound_as_string = lower_bound_as_string[1:] + '0'
-                    upper_bound_as_string = upper_bound_as_string[1:] + '9'
-                    if underflow_count != 0:
-                        underflows.append(underflow_count)
-                        underflow_count = 0
-                elif lower_bound_as_string[1] == '0' and upper_bound_as_string[1] == '9':
-                    lower_bound_as_string = lower_bound_as_string[:2] + lower_bound_as_string[3:] + '0'
-                    upper_bound_as_string = upper_bound_as_string[:2] + upper_bound_as_string[3:] + '9'
-                lower_bound = int(lower_bound_as_string)
-                upper_bound = int(upper_bound_as_string)
         lower_bound_as_string = str(lower_bound)
-        digits_to_append = lower_bound_as_string.replace('0', '')
+        digits_to_append = str(int(lower_bound_as_string))
         result = result + digits_to_append
         return (result, underflows)
 
 if __name__ == "__main__":
-    initial_string = "YRATMEK$"
+    initial_string = "ARYTMEK$"
     encoder = Encoder(initial_string)
     decoder = Decoder(initial_string)
     message_to_encode = "AR"
