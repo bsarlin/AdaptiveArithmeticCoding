@@ -22,12 +22,13 @@ class Decoder:
         self.stop_char = stop_char
 
     # prints decoded characters to the output
-    def decode(self, message: float, cap: int):
+    def decode(self, message: float, cap: int) -> str:
+        result = ""
         for _ in range(cap):
             character = self._find_character(message)
             if character is None:
                 raise CharacterNotDefined(f"Character {character} not defined in the statistic")
-            print(character)
+            result += character
             if character == self.stop_char:
                 break
 
@@ -40,6 +41,7 @@ class Decoder:
             self.number_range.update_probabilities()
             self.number_range.update_bounds(lower_bound=lower_bound,
                                             upper_bound=upper_bound)
+        return result
 
     def decode_using_integers(self,
                               message_to_decode: str) -> str:
