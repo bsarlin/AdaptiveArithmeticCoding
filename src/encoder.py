@@ -5,7 +5,7 @@ from number_range import NumberRange
 from decoder import Decoder
 
 from huffman import Huffman_Encoding
-from utils.charset_generator import *
+from charset_generator import *
 
 
 class Encoder:
@@ -84,7 +84,7 @@ class Encoder:
             self.number_range.update_bounds(lower_bound=0.0,
                                             upper_bound=1.0)
         lower_bound_as_string = str(lower_bound)
-        digits_to_append = str(int(lower_bound_as_string))
+        digits_to_append = str(int(lower_bound_as_string.rstrip('0')))
         result = result + digits_to_append
         return (result, underflows)
 
