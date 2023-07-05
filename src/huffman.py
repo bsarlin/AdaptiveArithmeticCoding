@@ -134,18 +134,18 @@ def Huffman_Decoding(encoded_data, huffman_tree):
     string = ''.join([str(item) for item in decoded_output])
     return string
 
+if __name__ == "__main__":
+    """ First Test """
+    data = "AAAAAAABCCCCCCDDEEEEE"
+    print(data)
+    encoding, tree = Huffman_Encoding(data)
+    print("Encoded output", encoding)
+    print("Decoded Output", Huffman_Decoding(encoding, tree))
 
-""" First Test """
-data = "AAAAAAABCCCCCCDDEEEEE"
-print(data)
-encoding, tree = Huffman_Encoding(data)
-print("Encoded output", encoding)
-print("Decoded Output", Huffman_Decoding(encoding, tree))
+    """ Second Test """
 
-""" Second Test """
+    # f = open("test.txt", "r")
 
-# f = open("test.txt", "r")
-
-# data = f.read()
-# print(data)
-# Huffman_Encoding(data)
+    # data = f.read()
+    # print(data)
+    # Huffman_Encoding(data)
